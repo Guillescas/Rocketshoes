@@ -44,11 +44,28 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
           amount: productAmount - 1,
         });
 
-        // const productResponse = await api.get(`/products/${productId}`);
-        // const product = productResponse.data;
-  
-        // setCart([...cart, product]);
-        // localStorage.setItem('@Rocketshoes.cart', JSON.stringify([...cart, product]));
+        const productResponse = await api.get(`/products/${productId}`);
+        const product = productResponse.data;
+
+        const productIndex = cart.findIndex(product => product.id === productId);
+
+        if (productIndex < 0) {
+          product.amount = 1;
+          setCart([...cart, product]);
+          localStorage.setItem('@Rocketshoes.cart', JSON.stringify([...cart, product]));
+        } else {
+          const updatedCart = cart.map(product => {
+            if (product.id === productId) {
+              product.amount ? (product.amount = product.amount + 1) : product.amount = 1;
+              toast.success('Produto adicionado')  
+              return product;
+            }
+
+            else return product;
+          })
+          setCart(updatedCart);
+          localStorage.setItem('@Rocketshoes.cart', JSON.stringify(updatedCart));
+        }
       }
 
     } catch {
@@ -69,8 +86,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      api.get('/stock')
-        .then(response => console.log(response.data));
+
     } catch {
       toast.error('Não conseguimos analisar o estoque :(');
     }
