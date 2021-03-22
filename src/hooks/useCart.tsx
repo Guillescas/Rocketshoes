@@ -38,7 +38,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       const productAmount = productAmountResponse.data.amount;
 
       if (productAmount === 0) {
-        toast.error('Não há mais estoque desse produto')
+        toast.error('Quantidade solicitada fora de estoque')
       } else {
         await api.put(`/stock/${productId}`, {
           amount: productAmount - 1,
@@ -51,6 +51,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
         if (productIndex < 0) {
           product.amount = 1;
+
           setCart([...cart, product]);
           localStorage.setItem('@Rocketshoes.cart', JSON.stringify([...cart, product]));
         } else {
@@ -69,7 +70,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       }
 
     } catch {
-      toast.error('Não foi possível adicionar o produto ao carrinho');
+      toast.error('Erro na adição do produto');
     }
   };  
 
